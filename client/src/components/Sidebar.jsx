@@ -1,16 +1,94 @@
-function Sidebar({ activePage, setActivePage }) {
+function Sidebar({
+    activePage,
+    setActivePage,
+    user
+}) {
 
-    const menuItems = [
-        "Dashboard",
-        "Inventory",
-        "Sales Challans",
-        "Stock Movements"
+    const role =
+        user?.role || "Admin";
+
+
+    // =========================================
+    // MENU ITEMS
+    // =========================================
+
+    const allMenuItems = [
+
+        {
+            name: "Dashboard",
+            icon: "▦",
+            roles: [
+                "Admin",
+                "Sales",
+                "Warehouse",
+                "Accounts"
+            ]
+        },
+
+        {
+            name: "Customers",
+            icon: "♙",
+            roles: [
+                "Admin",
+                "Sales",
+                "Warehouse",
+                "Accounts"
+            ]
+        },
+
+        {
+            name: "Inventory",
+            icon: "▤",
+            roles: [
+                "Admin",
+                "Warehouse"
+            ]
+        },
+
+        {
+            name: "Sales Challans",
+            icon: "▣",
+            roles: [
+                "Admin",
+                "Sales"
+            ]
+        },
+
+        {
+            name: "Stock Movements",
+            icon: "↕",
+            roles: [
+                "Admin",
+                "Warehouse"
+            ]
+        }
+
     ];
 
+
+    // =========================================
+    // FILTER BY ROLE
+    // =========================================
+
+    const menuItems =
+        allMenuItems.filter(
+            (item) =>
+                item.roles.includes(role)
+        );
+
+
+    // =========================================
+    // UI
+    // =========================================
+
     return (
+
         <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col bg-slate-900 text-white">
 
-            {/* Logo */}
+
+            {/* ================================= */}
+            {/* LOGO */}
+            {/* ================================= */}
 
             <div className="border-b border-slate-800 px-7 py-6">
 
@@ -19,13 +97,15 @@ function Sidebar({ activePage, setActivePage }) {
                 </h1>
 
                 <p className="mt-2 text-sm text-slate-400">
-                    Admin Panel
+                    {role} Panel
                 </p>
 
             </div>
 
 
-            {/* Navigation */}
+            {/* ================================= */}
+            {/* NAVIGATION */}
+            {/* ================================= */}
 
             <nav className="flex-1 px-4 py-6">
 
@@ -36,47 +116,45 @@ function Sidebar({ activePage, setActivePage }) {
 
                 <div className="space-y-2">
 
-                    {menuItems.map((item) => (
+                    {menuItems.map(
+                        (item) => (
 
-                        <button
-                            key={item}
-                            type="button"
-                            onClick={() =>
-                                setActivePage(item)
-                            }
-                            className={`flex w-full items-center rounded-lg px-4 py-3 text-left text-sm font-medium transition ${
-                                activePage === item
-                                    ? "bg-blue-600 text-white"
-                                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                            }`}
-                        >
+                            <button
+                                key={item.name}
+                                type="button"
+                                onClick={() =>
+                                    setActivePage(
+                                        item.name
+                                    )
+                                }
+                                className={`flex w-full items-center rounded-lg px-4 py-3 text-left text-sm font-medium transition ${
+                                    activePage ===
+                                    item.name
+                                        ? "bg-blue-600 text-white"
+                                        : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                                }`}
+                            >
 
-                            {/* Simple icons */}
+                                <span className="mr-3 w-5 text-center">
+                                    {item.icon}
+                                </span>
 
-                            <span className="mr-3 w-5 text-center">
 
-                                {item === "Dashboard" && "▦"}
+                                {item.name}
 
-                                {item === "Inventory" && "▤"}
+                            </button>
 
-                                {item === "Sales Challans" && "▣"}
-
-                                {item === "Stock Movements" && "↕"}
-
-                            </span>
-
-                            {item}
-
-                        </button>
-
-                    ))}
+                        )
+                    )}
 
                 </div>
 
             </nav>
 
 
-            {/* Bottom */}
+            {/* ================================= */}
+            {/* USER INFORMATION */}
+            {/* ================================= */}
 
             <div className="border-t border-slate-800 p-4">
 
@@ -86,8 +164,15 @@ function Sidebar({ activePage, setActivePage }) {
                         Logged in as
                     </p>
 
+
                     <p className="mt-1 text-sm font-medium text-white">
-                        Administrator
+                        {user?.name ||
+                            "Administrator"}
+                    </p>
+
+
+                    <p className="mt-1 text-xs text-blue-400">
+                        {role}
                     </p>
 
                 </div>
@@ -95,7 +180,10 @@ function Sidebar({ activePage, setActivePage }) {
             </div>
 
         </aside>
+
     );
+
 }
+
 
 export default Sidebar;

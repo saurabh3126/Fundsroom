@@ -1,56 +1,110 @@
 const express = require("express");
+
 const router = express.Router();
 
-const customerController = require("../controllers/customerController");
-const authMiddleware = require("../middleware/authMiddleware");
-const roleMiddleware = require("../middleware/roleMiddleware");
+const customerController =
+    require("../controllers/customerController");
 
-// Get All Customers
+const authMiddleware =
+    require("../middleware/authMiddleware");
+
+const roleMiddleware =
+    require("../middleware/roleMiddleware");
+
+
+// =========================================
+// GET ALL CUSTOMERS
+// =========================================
+
 router.get(
     "/",
     authMiddleware,
-    roleMiddleware("Admin", "Sales", "Warehouse", "Accounts"),
+    roleMiddleware(
+        "Admin",
+        "Sales",
+        "Warehouse",
+        "Accounts"
+    ),
     customerController.getAllCustomers
 );
 
-// Search Customers
+
+// =========================================
+// SEARCH CUSTOMERS
+// =========================================
+
 router.get(
     "/search",
     authMiddleware,
-    roleMiddleware("Admin", "Sales", "Warehouse", "Accounts"),
+    roleMiddleware(
+        "Admin",
+        "Sales",
+        "Warehouse",
+        "Accounts"
+    ),
     customerController.searchCustomers
 );
 
-// Get Customer By ID
+
+// =========================================
+// GET CUSTOMER BY ID
+// =========================================
+
 router.get(
     "/:id",
     authMiddleware,
-    roleMiddleware("Admin", "Sales", "Warehouse", "Accounts"),
+    roleMiddleware(
+        "Admin",
+        "Sales",
+        "Warehouse",
+        "Accounts"
+    ),
     customerController.getCustomerById
 );
 
-// Create Customer
+
+// =========================================
+// CREATE CUSTOMER
+// =========================================
+
 router.post(
     "/",
     authMiddleware,
-    roleMiddleware("Admin", "Sales"),
+    roleMiddleware(
+        "Admin",
+        "Sales"
+    ),
     customerController.createCustomer
 );
 
-// Update Customer
+
+// =========================================
+// UPDATE CUSTOMER
+// =========================================
+
 router.put(
     "/:id",
     authMiddleware,
-    roleMiddleware("Admin", "Sales"),
+    roleMiddleware(
+        "Admin",
+        "Sales"
+    ),
     customerController.updateCustomer
 );
 
-// Delete Customer
+
+// =========================================
+// DELETE CUSTOMER
+// =========================================
+
 router.delete(
     "/:id",
     authMiddleware,
-    roleMiddleware("Admin"),
+    roleMiddleware(
+        "Admin"
+    ),
     customerController.deleteCustomer
 );
+
 
 module.exports = router;
