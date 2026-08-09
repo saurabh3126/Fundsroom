@@ -21,3 +21,13 @@ CREATE TABLE customers (
     pincode VARCHAR(10) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    product_name VARCHAR(150) NOT NULL,
+    sku VARCHAR(50) UNIQUE NOT NULL,
+    description TEXT,
+    category VARCHAR(100),
+    unit VARCHAR(30) NOT NULL,
+    price NUMERIC(12,2) NOT NULL CHECK (price >= 0),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
