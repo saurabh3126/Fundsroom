@@ -1,9 +1,27 @@
-INSERT INTO users (name, email, password, role, phone)
+INSERT INTO customers
+(customer_name, company_name, email, phone, gst_number, address, city, state, pincode)
+
 VALUES
-('Admin', 'admin@fundsroom.com', 'admin123', 'Admin', '9876543210'),
+(
+'Rajesh Kumar',
+'ABC Pvt Ltd',
+'abc@gmail.com',
+'9876543210',
+'27ABCDE1234F1Z5',
+'MG Road',
+'Pune',
+'Maharashtra',
+'411001'
+),
 
-('Rahul Sharma', 'sales@fundsroom.com', 'sales123', 'Sales', '9876543211'),
-
-('Aman Verma', 'warehouse@fundsroom.com', 'warehouse123', 'Warehouse', '9876543212'),
-
-('Neha Gupta', 'accounts@fundsroom.com', 'accounts123', 'Accounts', '9876543213');
+(
+'Amit Sharma',
+'XYZ Industries',
+'xyz@gmail.com',
+'9876543211',
+'29ABCDE5678F1Z8',
+'Sector 18',
+'Noida',
+'Uttar Pradesh',
+'201301'
+);
