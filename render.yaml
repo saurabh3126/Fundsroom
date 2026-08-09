@@ -1,14 +1,9 @@
 services:
 
-  # ==============================
-  # BACKEND - EXPRESS / NODE
-  # ==============================
-
   - type: web
     name: fundsroom-api
     runtime: node
     rootDir: server
-
     buildCommand: npm install
     startCommand: npm start
 
@@ -25,15 +20,10 @@ services:
         sync: false
 
 
-  # ==============================
-  # FRONTEND - REACT / VITE
-  # ==============================
-
   - type: web
     name: fundsroom-client
     runtime: static
     rootDir: client
-
     buildCommand: npm install && npm run build
     staticPublishPath: dist
 
@@ -41,10 +31,6 @@ services:
       - key: VITE_API_URL
         value: https://fundsroom-api.onrender.com
 
-
-# ==============================
-# POSTGRESQL DATABASE
-# ==============================
 
 databases:
 
