@@ -3,9 +3,12 @@ const cors = require("cors");
 require("dotenv").config();
 
 const pool = require("./db/db");
+
 const authRoutes = require("./routes/authRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const productRoutes = require("./routes/productRoutes");
+const inventoryRoutes = require("./routes/inventoryRoutes");
+
 const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
@@ -17,6 +20,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/inventory", inventoryRoutes);
 
 // Home Route
 app.get("/", (req, res) => {
