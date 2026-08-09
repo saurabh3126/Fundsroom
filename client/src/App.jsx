@@ -1,122 +1,213 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from "react";
+
+import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
+
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Inventory from "./pages/Inventory";
+import SalesChallans from "./pages/SalesChallans";
+import StockMovements from "./pages/StockMovements";
+
+import {
+    getInventory,
+    getChallans,
+    getStockMovements,
+    getCustomers,
+    getProducts
+} from "./services/api";
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem("user");
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+        try {
+            return savedUser
+                ? JSON.parse(savedUser)
+                : null;
+        } catch {
+            return null;
+        }
+    });
 
-      <div className="ticks"></div>
+    const [activePage, setActivePage] = useState("Dashboard");
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+    const [inventory, setInventory] = useState([]);
+    const [challans, setChallans] = useState([]);
+    const [movements, setMovements] = useState([]);
+    const [customers, setCustomers] = useState([]);
+    const [products, setProducts] = useState([]);
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    const [loading, setLoading] = useState(false);
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+
+            const [
+                inventoryResult,
+                challanResult,
+                movementResult,
+                customerResult,
+                productResult
+            ] = await Promise.all([
+                getInventory(),
+                getChallans(),
+                getStockMovements(),
+                getCustomers(),
+                getProducts()
+            ]);
+
+            if (inventoryResult.success) {
+                setInventory(inventoryResult.data || []);
+            }
+
+            if (challanResult.success) {
+                setChallans(challanResult.data || []);
+            }
+
+            if (movementResult.success) {
+                setMovements(movementResult.data || []);
+            }
+
+            if (customerResult.success) {
+                setCustomers(customerResult.data || []);
+            }
+
+            if (productResult.success) {
+                setProducts(productResult.data || []);
+            }
+
+        } catch (error) {
+            console.error("Error loading data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (user) {
+            fetchData();
+        }
+    }, [user]);
+
+    const handleLogin = (loggedInUser) => {
+        setUser(loggedInUser);
+        setActivePage("Dashboard");
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        setUser(null);
+
+        setInventory([]);
+        setChallans([]);
+        setMovements([]);
+        setCustomers([]);
+        setProducts([]);
+    };
+
+    if (!user) {
+        return <Login onLogin={handleLogin} />;
+    }
+
+    const totalStock = inventory.reduce(
+        (total, item) =>
+            total + Number(item.quantity || 0),
+        0
+    );
+
+    const lowStock = inventory.filter(
+        (item) =>
+            Number(item.quantity || 0) <=
+            Number(item.minimum_stock || 0)
+    );
+
+    return (
+        <div className="min-h-screen bg-slate-100">
+
+            <Sidebar
+                activePage={activePage}
+                setActivePage={setActivePage}
+            />
+
+            <main className="ml-64 min-h-screen">
+
+                <Header
+                    user={user}
+                    onLogout={handleLogout}
+                />
+
+                <section className="p-8">
+
+                    {loading ? (
+
+                        <div className="flex h-96 items-center justify-center">
+
+                            <div className="text-center">
+
+                                <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
+
+                                <p className="mt-4 text-sm text-slate-500">
+                                    Loading...
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    ) : (
+
+                        <>
+                            {activePage === "Dashboard" && (
+                                <Dashboard
+                                    inventory={inventory}
+                                    challans={challans}
+                                    totalStock={totalStock}
+                                    lowStock={lowStock}
+                                    setActivePage={setActivePage}
+                                    fetchData={fetchData}
+                                />
+                            )}
+
+                            {activePage === "Inventory" && (
+                                <Inventory
+                                    inventory={inventory}
+                                />
+                            )}
+
+                            {activePage === "Sales Challans" && (
+                                <SalesChallans
+                                    challans={challans}
+                                    customers={customers}
+                                    products={products}
+                                    fetchData={fetchData}
+                                    onBack={() =>
+                                        setActivePage("Dashboard")
+                                    }
+                                />
+                            )}
+
+                            {activePage === "Stock Movements" && (
+                                <StockMovements
+                                    movements={movements}
+                                    onBack={() =>
+                                        setActivePage("Dashboard")
+                                    }
+                                />
+                            )}
+                        </>
+
+                    )}
+
+                </section>
+
+            </main>
+
+        </div>
+    );
 }
 
-export default App
+export default App;
