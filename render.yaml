@@ -3,6 +3,7 @@ services:
   - type: web
     name: fundsroom-api
     runtime: node
+    plan: free
     rootDir: server
     buildCommand: npm install
     startCommand: npm start
@@ -35,3 +36,4 @@ services:
 databases:
 
   - name: fundsroom-db
+    plan: free
